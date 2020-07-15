@@ -1,6 +1,6 @@
 import re
 from telegram.ext import Updater, MessageHandler, Filters
-from app.config import token
+from config import token
 
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
 pepe_sticker_unique_id = "AgADQQEAAqghIQY"
