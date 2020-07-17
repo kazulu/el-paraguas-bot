@@ -1,11 +1,12 @@
 import re, random
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, MessageHandler, Filters
 from config import token
 
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
 pepe_sticker_unique_id = "AgADQQEAAqghIQY"
 
-welcome_sentences = [
+welcome_sentences = (
     "del Imperio que crea software",
     "de Jesucristo programador",
     "de Java",
@@ -19,18 +20,30 @@ welcome_sentences = [
     "del Clean Code",
     "de las apps basura del Play Store",
     "de España",
-    "del Espíritu Santo"
-]
+    "del Espíritu Santo",
+    "de la España programadora",
+)
+
 
 def reply_with_sticker(update, context):
-    update.message.reply_sticker(sticker = pepe_sticker_id)
+    update.message.reply_sticker(sticker=pepe_sticker_id)
+
 
 def reply_with_text(update, context):
     if update.message.sticker.file_unique_id == pepe_sticker_unique_id:
         update.message.reply_text("Abriendo paraguas")
 
+
 def welcome_message(update, context):
-    update.message.reply_text(create_welcome_message())
+    keyboard = [
+        [InlineKeyboardButton("Hilo Forocoches 🚗", url="https://www.forocoches.com/foro/showthread.php?t=8055773"),
+         InlineKeyboardButton("Lista LinkedIn 👔", url="https://docs.google.com/spreadsheets/d/1E2CcYO5vP-cxC7X66hnVBvwykPBP7S52lFji_TM51Xk/edit#gid=0")],
+        [InlineKeyboardButton("Enlace grupo 🔗", url="https://bit.ly/dawdam"),
+         InlineKeyboardButton("¿Quién soy? 🐸", url="https://github.com/kazulu/el-paraguas-bot")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text(create_welcome_message(), reply_markup=reply_markup)
+
 
 def create_welcome_message():
     sentences = []
@@ -42,7 +55,8 @@ def create_welcome_message():
     replace = message.rfind(",")
     new_message = message[:replace] + " y" + message[replace + 1:]
 
-    return "Por la gloria " + new_message + " yo te bendigo y te doy la bienvenida."
+    return f"Por la gloria {new_message} yo te bendigo y te doy la bienvenida."
+
 
 def main():
     updater = Updater(token, use_context=True)
@@ -54,6 +68,7 @@ def main():
 
     updater.start_polling()
     updater.idle()
+
 
 if __name__ == '__main__':
     main()
