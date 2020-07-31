@@ -1,8 +1,10 @@
 import random
 import re
-from config import token
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
+
+from config import token
 
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
 pepe_sticker_unique_id = "AgADQQEAAqghIQY"
@@ -35,21 +37,28 @@ def reply_with_text(update, context):
         update.message.reply_text("Abriendo paraguas")
 
 
-def welcome_message(update, context):
+def message_with_buttons(update, context, text):
     keyboard = [
         [InlineKeyboardButton("Hilo Forocoches 🚗", url="https://www.forocoches.com/foro/showthread.php?t=8055773"),
-         InlineKeyboardButton("Lista LinkedIn 👔", url="https://docs.google.com/spreadsheets/d/1E2CcYO5vP-cxC7X66hnVBvwykPBP7S52lFji_TM51Xk/edit#gid=0")],
+         InlineKeyboardButton("Lista LinkedIn 👔",
+                              url="https://docs.google.com/spreadsheets/d/1E2CcYO5vP-cxC7X66hnVBvwykPBP7S52lFji_TM51Xk/edit#gid=0")],
         [InlineKeyboardButton("Enlace grupo 🔗", url="https://bit.ly/dawdam"),
          InlineKeyboardButton("¿Quién soy? 🐸", url="https://github.com/kazulu/el-paraguas-bot")],
         [InlineKeyboardButton("Grupo de offtopic 😈", url="http://bit.ly/dawdamoff")],
     ]
 
     chat_id = update.effective_chat.id
-    username = "@" + update.message.new_chat_members[0].username
-    text = create_welcome_message(username)
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup, parse_mode="Markdown")
+
+
+def welcome_message(update, context):
+    user_id = update.message.new_chat_members[0].id
+    first_name = update.message.new_chat_members[0].first_name
+    mention = "[" + first_name + "](tg://user?id=" + str(user_id) + ")"
+
+    message_with_buttons(update, context, create_welcome_message(mention))
 
 
 def create_welcome_message(username="novato"):
@@ -64,8 +73,14 @@ def create_welcome_message(username="novato"):
 
     return f"Por la gloria {new_message} yo te bendigo y te doy la bienvenida {username}."
 
+
 def ban(update, context):
     update.message.reply_text("Venga tonto, pa tu casa")
+
+
+def links(update, context):
+    message_with_buttons(update, context, 'Aquí los tienes vago de mierda.')
+
 
 def main():
     updater = Updater(token, use_context=True)
@@ -75,6 +90,7 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.sticker, reply_with_text))
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome_message))
     dispatcher.add_handler(CommandHandler("ban", ban))
+    dispatcher.add_handler(CommandHandler("links", links))
 
     updater.start_polling()
     updater.idle()
