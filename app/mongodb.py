@@ -2,7 +2,7 @@ import logging
 
 from pymongo import MongoClient
 
-from config import mongodb_database, mongodb_collection
+from config import mongodb_database, mongodb_collection, mongodb_host, mongodb_port
 
 welcome_sentences = [
     {'sentence': 'del Imperio que crea software'},
@@ -25,7 +25,7 @@ welcome_sentences = [
 
 def insert_base_sentences():
     try:
-        with MongoClient('localhost', 27017) as client:
+        with MongoClient(mongodb_host, mongodb_port) as client:
             db = client[mongodb_database]
             collection = db[mongodb_collection]
 
@@ -38,7 +38,7 @@ def insert_base_sentences():
 
 def inser_new_sentence(update, sentence):
     try:
-        with MongoClient('localhost', 27017) as client:
+        with MongoClient(mongodb_host, mongodb_port) as client:
             db = client[mongodb_database]
             collection = db[mongodb_collection]
 
@@ -50,7 +50,7 @@ def inser_new_sentence(update, sentence):
 
 def get_welcome_sentences():
     try:
-        with MongoClient('localhost', 27017) as client:
+        with MongoClient(mongodb_host, mongodb_port) as client:
             db = client[mongodb_database]
             collection = db[mongodb_collection]
 
@@ -63,7 +63,7 @@ def get_welcome_sentences():
 
 def remove_sentence(update, sentence):
     try:
-        with MongoClient('localhost', 27017) as client:
+        with MongoClient(mongodb_host, mongodb_port) as client:
             db = client[mongodb_database]
             collection = db[mongodb_collection]
 
