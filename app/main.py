@@ -40,8 +40,7 @@ def reply_with_text(update, context):
 def message_with_buttons(update, context, text):
     keyboard = [
         [InlineKeyboardButton("Hilo Forocoches 🚗", url="https://www.forocoches.com/foro/showthread.php?t=8055773"),
-         InlineKeyboardButton("Lista LinkedIn 👔",
-                              url="https://docs.google.com/spreadsheets/d/1E2CcYO5vP-cxC7X66hnVBvwykPBP7S52lFji_TM51Xk/edit#gid=0")],
+         InlineKeyboardButton("Lista LinkedIn 👔", url="https://docs.google.com/spreadsheets/d/1E2CcYO5vP-cxC7X66hnVBvwykPBP7S52lFji_TM51Xk/edit#gid=0")],
         [InlineKeyboardButton("Enlace grupo 🔗", url="https://bit.ly/dawdam"),
          InlineKeyboardButton("¿Quién soy? 🐸", url="https://github.com/kazulu/el-paraguas-bot")],
         [InlineKeyboardButton("Grupo de offtopic 😈", url="http://bit.ly/dawdamoff")],
