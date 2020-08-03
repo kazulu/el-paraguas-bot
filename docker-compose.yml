@@ -7,11 +7,12 @@ services:
     restart: always
 
   app:
-    build: ./docker/python
-    working_dir: /usr/src/app
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
     restart: always
-    volumes:
-    - ./app:/usr/src/app
+    environment:
+      TELEGRAM_TOKEN: "your token here"
     links:
       - mongo
     command: ["python", "./main.py"]
