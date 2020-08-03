@@ -20,4 +20,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: kazulu/el-paraguas-bot
+          dockerfile: ./docker/python/Dockerfile
           tags: latest
