@@ -1,5 +1,6 @@
-# Telegram token
-token = 'your token here'
+import os
+
+token = os.getenv("TELEGRAM_TOKEN")
 
 # MongoDB
 mongodb_database = 'paraguasBot'
