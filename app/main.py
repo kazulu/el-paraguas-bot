@@ -1,31 +1,14 @@
 import random
 import re
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
-from config import token
+import mongodb
+from config import token, welcome_users
 
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
 pepe_sticker_unique_id = "AgADQQEAAqghIQY"
-
-welcome_sentences = (
-    "del Imperio que crea software",
-    "de Jesucristo programador",
-    "de Java",
-    "de Python",
-    "de Román el europeo",
-    "de Moldavia",
-    "de la ingeniera rusa",
-    "de Cecilio",
-    "de Ayuso",
-    "de Leetcode",
-    "del Clean Code",
-    "de las apps basura del Play Store",
-    "de España",
-    "del Espíritu Santo",
-    "de la España programadora",
-)
 
 
 def reply_with_sticker(update, context):
@@ -63,7 +46,7 @@ def welcome_message(update, context):
 def create_welcome_message(username="novato"):
     sentences = []
     while len(sentences) < 3:
-        random_sentence = random.choice(welcome_sentences)
+        random_sentence = random.choice(mongodb.get_welcome_sentences())
         if random_sentence not in sentences:
             sentences.append(random_sentence)
     message = ", ".join(sentences)
@@ -81,15 +64,48 @@ def links(update, context):
     message_with_buttons(update, context, 'Aquí los tienes vago de mierda.')
 
 
+def add_welcome_message(update, context):
+    user_id = update.message.from_user.name
+    if update.effective_chat.type == 'private' and user_id in welcome_users:
+        mongodb.inser_new_sentence(update, update.message.text[5:])
+
+
+def show_welcome_messages(update, context):
+    user_id = update.message.from_user.name
+    if update.effective_chat.type == 'private' and user_id in welcome_users:
+        message = '*🔥 Mensajes de bienvenida 🔥 *'
+        i = 0
+        for sentence in mongodb.get_welcome_sentences():
+            i += 1
+            message += f'\n \[{i}\] {sentence}'
+        update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN_V2)
+
+
+def remove_welcome_message(update, context):
+    user_id = update.message.from_user.name
+    if update.effective_chat.type == 'private' and user_id in welcome_users:
+        mongodb.remove_sentence(update, update.message.text[8:])
+
+
 def main():
+    # Inserts some welcomes sentences in the database in case there's none
+    mongodb.insert_base_sentences()
+
     updater = Updater(token, use_context=True)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(MessageHandler(Filters.regex(re.compile(r'abr(e|o|iendo) paraguas', re.IGNORECASE)), reply_with_sticker))
     dispatcher.add_handler(MessageHandler(Filters.sticker, reply_with_text))
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome_message))
+
+    # Public commands
     dispatcher.add_handler(CommandHandler("ban", ban))
     dispatcher.add_handler(CommandHandler("links", links))
+
+    # Welcome messages
+    dispatcher.add_handler(CommandHandler("add", add_welcome_message))
+    dispatcher.add_handler(CommandHandler("show", show_welcome_messages))
+    dispatcher.add_handler(CommandHandler("remove", remove_welcome_message))
 
     updater.start_polling()
     updater.idle()
