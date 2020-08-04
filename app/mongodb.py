@@ -37,7 +37,7 @@ def insert_base_sentences():
 
 
 def inser_new_sentence(update, sentence):
-    if sentence.isalnum():
+    if sentence.isalnum() and sentence:
         try:
             with MongoClient(mongodb_host, mongodb_port) as client:
                 db = client[mongodb_database]
