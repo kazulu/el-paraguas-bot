@@ -37,7 +37,7 @@ def insert_base_sentences():
 
 
 def inser_new_sentence(update, sentence):
-    if all(x.isalpha() or x.isspace() for x in sentence) and sentence:
+    if all(x.isalnum() or x.isspace() for x in sentence) and sentence:
         try:
             with MongoClient(mongodb_host, mongodb_port) as client:
                 db = client[mongodb_database]
