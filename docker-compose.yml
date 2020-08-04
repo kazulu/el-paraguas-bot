@@ -5,6 +5,8 @@ services:
   mongo:
     image: mongo:3.6
     restart: always
+    volumes: 
+      - ./docker/mongo/data:/data/db
 
   app:
     build:
