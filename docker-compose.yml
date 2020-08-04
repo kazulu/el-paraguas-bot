@@ -9,9 +9,7 @@ services:
       - ./docker/mongo/data:/data/db
 
   app:
-    build:
-      context: .
-      dockerfile: docker/python/Dockerfile
+    image: kazulu/el-paraguas-bot
     restart: always
     environment:
       TELEGRAM_TOKEN: "your token here"
