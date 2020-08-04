@@ -37,15 +37,18 @@ def insert_base_sentences():
 
 
 def inser_new_sentence(update, sentence):
-    try:
-        with MongoClient(mongodb_host, mongodb_port) as client:
-            db = client[mongodb_database]
-            collection = db[mongodb_collection]
+    if sentence.isalnum() and sentence:
+        try:
+            with MongoClient(mongodb_host, mongodb_port) as client:
+                db = client[mongodb_database]
+                collection = db[mongodb_collection]
 
-            collection.insert_one({'sentence': sentence})
-            update.message.reply_text(f'"{sentence}" insertada. ✅')
-    except:
-        logging.error('Cannot connect to the server.')
+                collection.insert_one({'sentence': sentence})
+                update.message.reply_text(f'"{sentence}" insertada. ✅')
+        except:
+            logging.error('Cannot connect to the server.')
+    else:
+        update.message.reply_text('Oye, eso no se hace. 🙄')
 
 
 def get_welcome_sentences():
