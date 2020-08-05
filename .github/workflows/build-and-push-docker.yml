@@ -1,4 +1,4 @@
-name: build and push docker images
+name: build, push and deploy docker images
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build-and-push:
+  build-push-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -22,3 +22,13 @@ jobs:
           repository: kazulu/el-paraguas-bot
           dockerfile: ./docker/python/Dockerfile
           tags: latest
+          
+      - name: Deploy on server via SSH
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host:  ${{ secrets.ORACLE_HOST_IP }}
+          username: ${{ secrets.ORACLE_HOST_KEY }}
+          key: ${{ secrets.ORACLE_HOST_USERNAME }}
+          script: |
+            cd ~/Projects/el-paraguas-bot
+            git log
