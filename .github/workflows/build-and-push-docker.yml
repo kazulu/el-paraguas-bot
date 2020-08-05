@@ -31,4 +31,5 @@ jobs:
           key: ${{ secrets.ORACLE_HOST_KEY }}
           script: |
             cd ~/Projects/el-paraguas-bot
-            git log
+            docker pull kazulu/el-paraguas-bot
+            docker-compose up --force-recreate -d
