@@ -27,8 +27,8 @@ jobs:
         uses: appleboy/ssh-action@v0.1.2
         with:
           host:  ${{ secrets.ORACLE_HOST_IP }}
-          username: ${{ secrets.ORACLE_HOST_KEY }}
-          key: ${{ secrets.ORACLE_HOST_USERNAME }}
+          username: ${{ secrets.ORACLE_HOST_USERNAME }}
+          key: ${{ secrets.ORACLE_HOST_KEY }}
           script: |
             cd ~/Projects/el-paraguas-bot
             git log
