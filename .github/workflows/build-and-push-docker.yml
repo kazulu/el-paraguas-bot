@@ -33,10 +33,10 @@ jobs:
           username: ${{ secrets.ORACLE_HOST_USERNAME }}
           key: ${{ secrets.ORACLE_HOST_KEY }}
           script: |
-          export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
-          [ -d ~/Projects/control-de-gastos ] || mkdir -p ~/Projects/control-de-gastos
-          cd ~/Projects/control-de-gastos
-          curl https://raw.githubusercontent.com/kazulu/control-de-gastos-bot/master/docker-compose.yml -o docker-compose.yml
-          docker-compose down
-          docker-compose build --pull
-          docker-compose up -d
+            export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+            [ -d ~/Projects/control-de-gastos ] || mkdir -p ~/Projects/control-de-gastos
+            cd ~/Projects/control-de-gastos
+            curl https://raw.githubusercontent.com/kazulu/control-de-gastos-bot/master/docker-compose.yml -o docker-compose.yml
+            docker-compose down
+            docker-compose build --pull
+            docker-compose up -d
