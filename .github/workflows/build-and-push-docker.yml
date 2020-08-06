@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build-push-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -23,6 +23,9 @@ jobs:
           dockerfile: ./docker/python/Dockerfile
           tags: latest
           
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy on server via SSH
         uses: appleboy/ssh-action@v0.1.2
         with:
@@ -30,6 +33,10 @@ jobs:
           username: ${{ secrets.ORACLE_HOST_USERNAME }}
           key: ${{ secrets.ORACLE_HOST_KEY }}
           script: |
-            cd ~/Projects/el-paraguas-bot
-            docker pull kazulu/el-paraguas-bot
-            docker-compose up --force-recreate -d
+          export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          [ -d ~/Projects/control-de-gastos ] || mkdir -p ~/Projects/control-de-gastos
+          cd ~/Projects/control-de-gastos
+          curl https://raw.githubusercontent.com/kazulu/control-de-gastos-bot/master/docker-compose.yml -o docker-compose.yml
+          docker-compose down
+          docker-compose build --pull
+          docker-compose up -d

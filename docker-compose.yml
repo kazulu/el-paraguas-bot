@@ -6,7 +6,7 @@ services:
     image: mongo:3.6
     restart: always
     volumes: 
-      - ./docker/mongo/data:/data/db
+      - ./data:/data/db
 
   app:
     image: kazulu/el-paraguas-bot
