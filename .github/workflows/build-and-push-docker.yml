@@ -24,6 +24,7 @@ jobs:
           tags: latest
           
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy on server via SSH
