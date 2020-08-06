@@ -37,6 +37,6 @@ jobs:
             [ -d ~/Projects/el-paraguas ] || mkdir -p ~/Projects/el-paraguas
             cd ~/Projects/el-paraguas
             curl https://raw.githubusercontent.com/kazulu/el-paraguas-bot/master/docker-compose.yml -o docker-compose.yml
-            docker-compose down
-            docker-compose build --pull
+            docker-compose down --rmi local
+            docker pull kazulu/el-paraguas-bot
             docker-compose up -d
