@@ -1,8 +1,11 @@
 import random
 import re
+import schedule
+import time
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
+from telegram.ext.dispatcher import run_async
 
 import mongodb
 from config import token, welcome_users
@@ -10,14 +13,18 @@ from config import token, welcome_users
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
 pepe_sticker_unique_id = "AgADQQEAAqghIQY"
 
+pole = True
+
 
 def reply_with_sticker(update, context):
     update.message.reply_sticker(sticker=pepe_sticker_id)
+    is_la_pole(update, context)
 
 
 def reply_with_text(update, context):
     if update.message.sticker.file_unique_id == pepe_sticker_unique_id:
         update.message.reply_text("Abriendo paraguas")
+    is_la_pole(update, context)
 
 
 def message_with_buttons(update, context, text):
@@ -87,6 +94,25 @@ def remove_welcome_message(update, context):
         mongodb.remove_sentence(update, update.message.text[8:])
 
 
+def reset_pole():
+    global pole
+    pole = False
+
+
+@run_async
+def schedule_everyday():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+def is_la_pole(update, context):
+    global pole
+    if not pole:
+        update.message.reply_text('Has hecho la pole, felicidades. 💈')
+        pole = True
+
+
 def main():
     # Inserts some welcomes sentences in the database in case there's none
     mongodb.insert_base_sentences()
@@ -94,6 +120,11 @@ def main():
     updater = Updater(token, use_context=True)
     dispatcher = updater.dispatcher
 
+    # Resets la pole every day
+    schedule.every().day.at("00:00").do(reset_pole)
+    schedule_everyday()
+
+    # Custom Message Handler
     dispatcher.add_handler(MessageHandler(Filters.regex(re.compile(r'abr(e|o|iendo) paraguas', re.IGNORECASE)), reply_with_sticker))
     dispatcher.add_handler(MessageHandler(Filters.sticker, reply_with_text))
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome_message))
@@ -106,6 +137,9 @@ def main():
     dispatcher.add_handler(CommandHandler("add", add_welcome_message))
     dispatcher.add_handler(CommandHandler("show", show_welcome_messages))
     dispatcher.add_handler(CommandHandler("remove", remove_welcome_message))
+
+    # Pole
+    dispatcher.add_handler(MessageHandler(Filters.all, is_la_pole))
 
     updater.start_polling()
     updater.idle()
