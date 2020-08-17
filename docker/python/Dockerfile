@@ -1,5 +1,7 @@
 FROM python:3.8
 
+RUN cp /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+
 WORKDIR /usr/src/app
 
 COPY ./app .
