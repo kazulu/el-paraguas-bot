@@ -14,7 +14,7 @@ from config import token, welcome_users
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
 pepe_sticker_unique_id = "AgADQQEAAqghIQY"
 
-pole = True
+pole = False
 
 
 def reply_with_sticker(update, context):
@@ -109,7 +109,7 @@ def schedule_everyday():
 
 def is_la_pole(update, context):
     global pole
-    if not pole:
+    if not pole and update.effective_chat.type == 'group':
         update.message.reply_text('Has hecho la pole, felicidades. 💈')
         pole = True
 
