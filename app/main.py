@@ -2,7 +2,6 @@ import random
 import re
 import schedule
 import time
-import arrow
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
@@ -122,8 +121,7 @@ def main():
     dispatcher = updater.dispatcher
 
     # Resets la pole every day
-    twelve_o_clock = arrow.now().replace(hour=0, minute=00, second=00).to('Europe/Madrid').format('HH:mm')
-    schedule.every().day.at(twelve_o_clock).do(reset_pole)
+    schedule.every().day.do(reset_pole)
     schedule_everyday()
 
     # Custom Message Handler
