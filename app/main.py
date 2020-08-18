@@ -121,7 +121,7 @@ def main():
     dispatcher = updater.dispatcher
 
     # Resets la pole every day
-    schedule.every().day.do(reset_pole)
+    schedule.every().day.at('00:00').do(reset_pole)
     schedule_everyday()
 
     # Custom Message Handler
