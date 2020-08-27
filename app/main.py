@@ -33,7 +33,8 @@ def message_with_buttons(update, context, text):
          InlineKeyboardButton("Lista LinkedIn 👔", url="https://docs.google.com/spreadsheets/d/1E2CcYO5vP-cxC7X66hnVBvwykPBP7S52lFji_TM51Xk/edit#gid=0")],
         [InlineKeyboardButton("Enlace grupo 🔗", url="https://bit.ly/dawdam"),
          InlineKeyboardButton("¿Quién soy? 🐸", url="https://github.com/kazulu/el-paraguas-bot")],
-        [InlineKeyboardButton("Grupo de offtopic (+18) 😈", url="http://bit.ly/dawdamoff")],
+        [InlineKeyboardButton("Canal con recursos 🧑🏻‍💻", url="https://t.me/joinchat/AAAAAEuScA9YbrOnaeLLcg"),
+         InlineKeyboardButton("Grupo de offtopic (+18) 😈", url="http://bit.ly/dawdamoff")],
     ]
 
     chat_id = update.effective_chat.id
