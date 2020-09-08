@@ -70,6 +70,9 @@ def ban(update, context):
 
 def links(update, context):
     message_with_buttons(update, context, 'Aquí los tienes vago de mierda.')
+   
+def pinned(update, context):
+    message_with_buttons(update, context, 'Bienvenido al canal de DAW/DAM. Estos son los links diponibles actualmente:')
 
 
 def add_welcome_message(update, context):
@@ -133,6 +136,7 @@ def main():
     # Public commands
     dispatcher.add_handler(CommandHandler("ban", ban))
     dispatcher.add_handler(CommandHandler("links", links))
+    dispatcher.add_handler(CommandHandler("pinned", pinned))
 
     # Welcome messages
     dispatcher.add_handler(CommandHandler("add", add_welcome_message))
