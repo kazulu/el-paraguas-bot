@@ -20,6 +20,7 @@ pole = True
 
 def reply_with_sticker(update, context):
     update.message.reply_sticker(sticker=pepe_sticker_id)
+    update.message.reply_text(text=update.effective_chat.id)
     is_la_pole(update, context)
 
 
