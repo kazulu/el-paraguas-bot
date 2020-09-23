@@ -10,12 +10,15 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram.ext.dispatcher import run_async
 from gtts import gTTS
-from config import token, welcome_users
-
-pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
-pepe_sticker_unique_id = "AgADQQEAAqghIQY"
+from config import token, superusers, damdaw_chat_id, pepe_sticker_id, pepe_sticker_unique_id
 
 pole = True
+
+
+def send_message_as_bot(update, context):
+    user_id = update.message.from_user.name
+    if update.effective_chat.type == 'private' and user_id in superusers:
+        context.bot.send_message(chat_id=damdaw_chat_id, text=update.message.text[9:])
 
 
 def reply_with_sticker(update, context):
@@ -82,20 +85,21 @@ def ban(update, context):
 
 def links(update, context):
     message_with_buttons(update, context, 'Aquí los tienes vago de mierda.')
-   
+
+
 def pinned(update, context):
     message_with_buttons(update, context, 'Bienvenido al canal de DAW/DAM. Estos son los links diponibles actualmente:')
 
 
 def add_welcome_message(update, context):
     user_id = update.message.from_user.name
-    if update.effective_chat.type == 'private' and user_id in welcome_users:
+    if update.effective_chat.type == 'private' and user_id in superusers:
         mongodb.inser_new_sentence(update, update.message.text[5:])
 
 
 def show_welcome_messages(update, context):
     user_id = update.message.from_user.name
-    if update.effective_chat.type == 'private' and user_id in welcome_users:
+    if update.effective_chat.type == 'private' and user_id in superusers:
         message = '*🔥 Mensajes de bienvenida 🔥 *'
         i = 0
         for sentence in mongodb.get_welcome_sentences():
@@ -106,7 +110,7 @@ def show_welcome_messages(update, context):
 
 def remove_welcome_message(update, context):
     user_id = update.message.from_user.name
-    if update.effective_chat.type == 'private' and user_id in welcome_users:
+    if update.effective_chat.type == 'private' and user_id in superusers:
         mongodb.remove_sentence(update, update.message.text[8:])
 
 
@@ -154,6 +158,7 @@ def main():
     dispatcher.add_handler(CommandHandler("add", add_welcome_message))
     dispatcher.add_handler(CommandHandler("show", show_welcome_messages))
     dispatcher.add_handler(CommandHandler("remove", remove_welcome_message))
+    dispatcher.add_handler(CommandHandler("message", send_message_as_bot))
 
     # Pole
     dispatcher.add_handler(MessageHandler(Filters.all, is_la_pole))
