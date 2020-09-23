@@ -64,7 +64,7 @@ def create_welcome_message(update, context, first_name, username="novato"):
     new_message = message[:replace] + " y" + message[replace + 1:]
 
     audio_final_message = f"Por la gloria {new_message}, yo te bendigo y te doy la bienvenida, {first_name}."
-    tts = gTTS(text=audio_final_message, lang='es')
+    tts = gTTS(text=audio_final_message, lang='es-es')
     filename = f"welcome_message_{uuid.uuid4().hex}.ogg"
     tts.save(filename)
 
