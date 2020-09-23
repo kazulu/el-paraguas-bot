@@ -2,12 +2,14 @@ import random
 import re
 import schedule
 import time
+import uuid
+import os
+import mongodb
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram.ext.dispatcher import run_async
-
-import mongodb
+from gtts import gTTS
 from config import token, welcome_users
 
 pepe_sticker_id = "CAACAgQAAxkBAAOyXw4dNEA3mbtu7tIXClE3_PGRKHkAAkEBAAKoISEGr2bGG23uS4saBA"
@@ -48,10 +50,10 @@ def welcome_message(update, context):
     first_name = update.message.new_chat_members[0].first_name
     mention = "[" + first_name + "](tg://user?id=" + str(user_id) + ")"
 
-    message_with_buttons(update, context, create_welcome_message(mention))
+    message_with_buttons(update, context, create_welcome_message(update, context, first_name, mention))
 
 
-def create_welcome_message(username="novato"):
+def create_welcome_message(update, context, first_name, username="novato"):
     sentences = []
     while len(sentences) < 3:
         random_sentence = random.choice(mongodb.get_welcome_sentences())
@@ -61,7 +63,17 @@ def create_welcome_message(username="novato"):
     replace = message.rfind(",")
     new_message = message[:replace] + " y" + message[replace + 1:]
 
-    return f"Por la gloria {new_message} yo te bendigo y te doy la bienvenida {username}."
+    audio_final_message = f"Por la gloria {new_message}, yo te bendigo y te doy la bienvenida, {first_name}."
+    tts = gTTS(text=audio_final_message, lang='es')
+    filename = f"welcome_message_{uuid.uuid4().hex}.ogg"
+    tts.save(filename)
+
+    context.bot.send_voice(chat_id=update.effective_chat.id, voice=open(filename, 'rb'))
+    os.remove(filename)
+
+    final_message = f"Por la gloria {new_message}, yo te bendigo y te doy la bienvenida, {username}."
+
+    return final_message
 
 
 def ban(update, context):
