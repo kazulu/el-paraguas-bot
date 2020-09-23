@@ -39,6 +39,6 @@ jobs:
             cd ~/Projects/el-paraguas
             curl https://raw.githubusercontent.com/kazulu/el-paraguas-bot/master/docker-compose.yml -o docker-compose.yml
             docker-compose down --rmi local
-            docker network ls
+            docker network rm c43c133b5808 57854b9f9e7d
             docker pull kazulu/el-paraguas-bot
             docker-compose up -d
