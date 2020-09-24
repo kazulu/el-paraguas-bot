@@ -1,7 +1,8 @@
 import random
 import re
-import schedule
 import time
+import pytz
+import datetime
 import uuid
 import os
 import mongodb
@@ -11,6 +12,8 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram.ext.dispatcher import run_async
 from gtts import gTTS
 from config import token, superusers, damdaw_chat_id, pepe_sticker_id, pepe_sticker_unique_id
+
+ONE_DAY = 86400
 
 pole = True
 
@@ -121,16 +124,24 @@ def reset_pole():
 
 @run_async
 def schedule_everyday():
+    global pole
     while True:
-        schedule.run_pending()
+        dt_central_europe = pytz.timezone('Europe/Madrid').localize(datetime.datetime(2020, 1, 1, 0, 0))
+        timestamp = dt_central_europe.timestamp()
+        current_timestamp = int(time.time())
+        one_day_has_passed = (((timestamp + current_timestamp) % ONE_DAY) == 0)
+
+        if one_day_has_passed:
+            reset_pole()
+
         time.sleep(1)
 
 
 def is_la_pole(update, context):
     global pole
     if not pole and update.effective_chat.type == 'group':
-        update.message.reply_text('Has hecho la pole, felicidades. 💈')
         pole = True
+        update.message.reply_text('Has hecho la pole, felicidades. 💈')
 
 
 def main():
@@ -141,7 +152,6 @@ def main():
     dispatcher = updater.dispatcher
 
     # Resets la pole every day
-    schedule.every().day.at('00:00').do(reset_pole)
     schedule_everyday()
 
     # Custom Message Handler
