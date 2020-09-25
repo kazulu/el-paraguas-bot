@@ -37,7 +37,7 @@ jobs:
             export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
             [ -d ~/Projects/el-paraguas ] || mkdir -p ~/Projects/el-paraguas
             cd ~/Projects/el-paraguas
-            curl https://raw.githubusercontent.com/kazulu/el-paraguas-bot/master/docker-compose.yml -o docker-compose.yml
+            curl https://raw.githubusercontent.com/kazulu/el-paraguas-bot/master/production.yml -o production.yml
             docker-compose down --rmi local
             docker pull kazulu/el-paraguas-bot
-            docker-compose up -d
+            docker-compose -f production.yml up -d
