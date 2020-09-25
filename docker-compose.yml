@@ -4,13 +4,11 @@ services:
 
   mongo:
     image: mongo:3.6
-    restart: always
-    volumes: 
-      - ./data:/data/db
 
   app:
-    image: kazulu/el-paraguas-bot
-    restart: always
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
     environment:
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
     links:
