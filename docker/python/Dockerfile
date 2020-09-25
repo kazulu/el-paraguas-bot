@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8.5-buster
 
 RUN cp /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 
