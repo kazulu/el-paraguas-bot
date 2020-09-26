@@ -9,7 +9,6 @@ import mongodb
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
-from telegram.ext.dispatcher import run_async
 from gtts import gTTS
 from config import token, superusers, damdaw_chat_id, pepe_sticker_id, pepe_sticker_unique_id
 
@@ -87,7 +86,7 @@ def ban(update, context):
 
 
 def links(update, context):
-    message_with_buttons(update, context, 'Aquí los tienes vago de mierda.')
+    message_with_buttons(update, context, 'Aquí los tienes, vago de mierda.')
 
 
 def pinned(update, context):
@@ -117,24 +116,15 @@ def remove_welcome_message(update, context):
         mongodb.remove_sentence(update, update.message.text[8:])
 
 
-def reset_pole():
+def reset_pole(context):
     global pole
-    pole = False
+    dt_central_europe = pytz.timezone('Europe/Madrid').localize(datetime.datetime(2020, 1, 1, 0, 0))
+    timestamp = dt_central_europe.timestamp()
+    current_timestamp = int(time.time())
+    one_day_has_passed = (((timestamp + current_timestamp) % ONE_DAY) == 0)
 
-
-@run_async
-def schedule_everyday():
-    global pole
-    while True:
-        dt_central_europe = pytz.timezone('Europe/Madrid').localize(datetime.datetime(2020, 1, 1, 0, 0))
-        timestamp = dt_central_europe.timestamp()
-        current_timestamp = int(time.time())
-        one_day_has_passed = (((timestamp + current_timestamp) % ONE_DAY) == 0)
-
-        if one_day_has_passed:
-            reset_pole()
-
-        time.sleep(1)
+    if one_day_has_passed:
+        pole = False
 
 
 def is_la_pole(update, context):
@@ -152,7 +142,7 @@ def main():
     dispatcher = updater.dispatcher
 
     # Resets la pole every day
-    schedule_everyday()
+    updater.job_queue.run_repeating(reset_pole, 1)
 
     # Custom Message Handler
     dispatcher.add_handler(MessageHandler(Filters.regex(re.compile(r'abr(e|o|iendo) paraguas', re.IGNORECASE)), reply_with_sticker))
