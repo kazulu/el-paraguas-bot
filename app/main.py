@@ -1,6 +1,5 @@
 import random
 import re
-import time
 import pytz
 import datetime
 import uuid
@@ -117,14 +116,12 @@ def remove_welcome_message(update, context):
 
 
 def calculate_datetime():
-    todays_month = datetime.datetime.today().month
-    todays_day = datetime.datetime.today().day
-    todays_year = datetime.datetime.today().year
+    today = datetime.datetime.today()
 
     madrid_timezone = pytz.timezone('Europe/Madrid')
     utc_timezone = pytz.timezone('UTC')
 
-    dt_timezone = madrid_timezone.localize(datetime.datetime(todays_year, todays_month, todays_day, 23, 0, 0)).astimezone(utc_timezone)
+    dt_timezone = madrid_timezone.localize(datetime.datetime(today.year, today.month, today.day, 23, 0, 0)).astimezone(utc_timezone)
     utc_hour = int(datetime.datetime.strftime(dt_timezone, '%H %M').split()[0])
     dt = datetime.time(hour=utc_hour, minute=59, second=55)
 
