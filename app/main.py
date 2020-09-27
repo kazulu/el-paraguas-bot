@@ -116,15 +116,24 @@ def remove_welcome_message(update, context):
         mongodb.remove_sentence(update, update.message.text[8:])
 
 
+def calculate_datetime():
+    todays_month = datetime.datetime.today().month
+    todays_day = datetime.datetime.today().day
+    todays_year = datetime.datetime.today().year
+
+    madrid_timezone = pytz.timezone('Europe/Madrid')
+    utc_timezone = pytz.timezone('UTC')
+
+    dt_timezone = madrid_timezone.localize(datetime.datetime(todays_year, todays_month, todays_day, 23, 0, 0)).astimezone(utc_timezone)
+    utc_hour = int(datetime.datetime.strftime(dt_timezone, '%H %M').split()[0])
+    dt = datetime.time(hour=utc_hour, minute=59, second=55)
+
+    return dt
+
+
 def reset_pole(context):
     global pole
-    dt_central_europe = pytz.timezone('Europe/Madrid').localize(datetime.datetime(2020, 1, 1, 0, 0))
-    timestamp = dt_central_europe.timestamp()
-    current_timestamp = int(time.time())
-    one_day_has_passed = (((timestamp + current_timestamp) % ONE_DAY) == 0)
-
-    if one_day_has_passed:
-        pole = False
+    pole = False
 
 
 def is_la_pole(update, context):
@@ -142,7 +151,7 @@ def main():
     dispatcher = updater.dispatcher
 
     # Resets la pole every day
-    updater.job_queue.run_repeating(reset_pole, 1)
+    updater.job_queue.run_daily(reset_pole, calculate_datetime())
 
     # Custom Message Handler
     dispatcher.add_handler(MessageHandler(Filters.regex(re.compile(r'abr(e|o|iendo) paraguas', re.IGNORECASE)), reply_with_sticker))
