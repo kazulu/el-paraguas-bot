@@ -11,8 +11,6 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from gtts import gTTS
 from config import token, superusers, damdaw_chat_id, pepe_sticker_id, pepe_sticker_unique_id
 
-ONE_DAY = 86400
-
 pole = True
 
 
@@ -115,19 +113,6 @@ def remove_welcome_message(update, context):
         mongodb.remove_sentence(update, update.message.text[8:])
 
 
-def calculate_datetime():
-    today = datetime.datetime.today()
-
-    madrid_timezone = pytz.timezone('Europe/Madrid')
-    utc_timezone = pytz.timezone('UTC')
-
-    dt_timezone = madrid_timezone.localize(datetime.datetime(today.year, today.month, today.day, 23, 0, 0)).astimezone(utc_timezone)
-    utc_hour = int(datetime.datetime.strftime(dt_timezone, '%H %M').split()[0])
-    dt = datetime.time(hour=utc_hour, minute=59, second=55)
-
-    return dt
-
-
 def reset_pole(context):
     global pole
     pole = False
@@ -148,7 +133,7 @@ def main():
     dispatcher = updater.dispatcher
 
     # Resets la pole every day
-    updater.job_queue.run_daily(reset_pole, calculate_datetime())
+    updater.job_queue.run_daily(reset_pole, datetime.time(hour=23, minute=59, second=55))
 
     # Custom Message Handler
     dispatcher.add_handler(MessageHandler(Filters.regex(re.compile(r'abr(e|o|iendo) paraguas', re.IGNORECASE)), reply_with_sticker))
