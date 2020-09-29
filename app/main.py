@@ -1,7 +1,5 @@
 import random
 import re
-import pytz
-import datetime
 import uuid
 import os
 import mongodb
@@ -10,8 +8,6 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from gtts import gTTS
 from config import token, superusers, damdaw_chat_id, pepe_sticker_id, pepe_sticker_unique_id
-
-pole = True
 
 
 def send_message_as_bot(update, context):
@@ -22,13 +18,11 @@ def send_message_as_bot(update, context):
 
 def reply_with_sticker(update, context):
     update.message.reply_sticker(sticker=pepe_sticker_id)
-    is_la_pole(update, context)
 
 
 def reply_with_text(update, context):
     if update.message.sticker.file_unique_id == pepe_sticker_unique_id:
         update.message.reply_text("Abriendo paraguas")
-    is_la_pole(update, context)
 
 
 def message_with_buttons(update, context, text):
@@ -113,27 +107,12 @@ def remove_welcome_message(update, context):
         mongodb.remove_sentence(update, update.message.text[8:])
 
 
-def reset_pole(context):
-    global pole
-    pole = False
-
-
-def is_la_pole(update, context):
-    global pole
-    if not pole and update.effective_chat.type == 'group':
-        pole = True
-        update.message.reply_text('Has hecho la pole, felicidades. 💈')
-
-
 def main():
     # Inserts some welcomes sentences in the database in case there's none
     mongodb.insert_base_sentences()
 
     updater = Updater(token, use_context=True)
     dispatcher = updater.dispatcher
-
-    # Resets la pole every day
-    updater.job_queue.run_daily(reset_pole, datetime.time(hour=23, minute=59, second=55))
 
     # Custom Message Handler
     dispatcher.add_handler(MessageHandler(Filters.regex(re.compile(r'abr(e|o|iendo) paraguas', re.IGNORECASE)), reply_with_sticker))
@@ -150,9 +129,6 @@ def main():
     dispatcher.add_handler(CommandHandler("show", show_welcome_messages))
     dispatcher.add_handler(CommandHandler("remove", remove_welcome_message))
     dispatcher.add_handler(CommandHandler("message", send_message_as_bot))
-
-    # Pole
-    dispatcher.add_handler(MessageHandler(Filters.all, is_la_pole))
 
     updater.start_polling()
     updater.idle()
